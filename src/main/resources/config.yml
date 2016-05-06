@@ -1,0 +1,21 @@
+MySQL:
+  Hostname: localhost
+  Username: username
+  Password: password
+  Database: database
+
+# Node name. Must be alphanumeric.
+NodeName: undefined
+
+# Times between MySQL requests in milliseconds. Can't be less than 200.
+DataExchangerThrottleTime: 500
+
+# Time a packet should live by default. In milliseconds. Default: 1 day.
+DefaultTTL: 86400000
+
+# List of tags for this server.
+Tags:
+- default
+
+# Debug mode. Debug messages will be printed on the server console when this is set to true.
+Debug: false

@@ -1,0 +1,13 @@
+name: ${project.artifactId}
+main: ${package}.${project.artifactId}
+version: ${project.version}
+author: ${developer}
+
+commands:
+   ${project.artifactId}:
+      description: Manage ${project.artifactId}
+
+permissions:
+    ${project.artifactId}.manage:
+        description: Manage ${project.artifactId}
+        default: op
