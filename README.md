@@ -37,6 +37,6 @@ Add SynX to your build path. Maven:
 </dependency>
 ```
        
-Use `SynX.getInstance().broadcast(String channel, byte[] data)` and `SynX.getInstance().send(String channel, byte[] data, Node... destination)` to send data.  
+Use `SynX.instance().broadcast(String channel, byte[] data)` and `SynX.instance().send(String channel, byte[] data, Node... destination)` to send data.  
 I suggest to use a `ByteStreams.newDataOutput()` to help generating a byte array of data to be sent and `ByteStreams.newDataInput()` for received data.  
-Your plugin can receive data by implementing the ChannelListener class and using `SynX.getInstance().register(Plugin instance, String channel, ChannelListener channelListener)` to register it.
+Your plugin can receive data by implementing the ChannelListener class and using `SynX.instance().register(Plugin instance, String channel, ChannelListener channelListener)` to register it.
