@@ -21,4 +21,22 @@ All builds for my plugins can be found at this link: http://kaikk.net/mc/
 - MySQL database
 
 ### Developers: How to use
-Add SynX to your build path. Use `SynX.getInstance().broadcast(String channel, byte[] data)` and `SynX.getInstance().send(String channel, byte[] data, Node... destination)` to send data. I suggest to use a `ByteStreams.newDataOutput()` to help generating a byte array of data to be sent and `ByteStreams.newDataInput()` for received data. Your plugin can receive data by implementing the ChannelListener class and using `SynX.getInstance().register(Plugin instance, String channel, ChannelListener channelListener)` to register it.
+Add SynX to your build path. Maven:  
+
+```
+<repository>
+  <id>net.kaikk.mc</id>
+  <url>http://kaikk.net/mc/repo/</url>
+</repository>
+<dependency>
+  <groupId>net.kaikk.mc</groupId>
+  <artifactId>SynX</artifactId>
+  <version>0.9.1</version>
+  <type>jar</type>
+  <scope>provided</scope>
+</dependency>
+```
+       
+Use `SynX.getInstance().broadcast(String channel, byte[] data)` and `SynX.getInstance().send(String channel, byte[] data, Node... destination)` to send data.  
+I suggest to use a `ByteStreams.newDataOutput()` to help generating a byte array of data to be sent and `ByteStreams.newDataInput()` for received data.  
+Your plugin can receive data by implementing the ChannelListener class and using `SynX.getInstance().register(Plugin instance, String channel, ChannelListener channelListener)` to register it.
