@@ -18,11 +18,13 @@ class DataExchangerThread extends Thread {
 	private SynX instance;
 	private final PacketsDispatcherThread dispatcher;
 	private long lastHourlyTask;
+	private DataStore ds;
 	
-	DataExchangerThread(SynX instance) {
+	DataExchangerThread(SynX instance) throws Exception {
 		super("SynXDataExchangerThread");
 		this.instance = instance;
 		this.dispatcher = new PacketsDispatcherThread(instance);
+		this.ds = new DataStore(instance);
 	}
 	
 	@Override
@@ -40,7 +42,7 @@ class DataExchangerThread extends Thread {
 				instance.debug("DataExchangerThread: running hourly task");
 				try {
 					lastHourlyTask = System.currentTimeMillis();
-					Statement s = instance.dataStore().statement();
+					Statement s = ds.statement();
 					// cleanup
 					s.executeUpdate("START TRANSACTION");
 					s.executeUpdate("DELETE d, t FROM synx_data AS d LEFT OUTER JOIN synx_transfers AS t ON t.dataid = d.id WHERE d.tod < "+System.currentTimeMillis());
@@ -49,7 +51,7 @@ class DataExchangerThread extends Thread {
 				} catch (SQLException e) {
 					e.printStackTrace();
 					try {
-						instance.dataStore().statement().executeUpdate("ROLLBACK");
+						ds.statement().executeUpdate("ROLLBACK");
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -66,7 +68,6 @@ class DataExchangerThread extends Thread {
 			}
 		}
 		instance.debug("DataExchangerThread: stopped");
-		
 	}
 	
 	@Override
@@ -99,9 +100,9 @@ class DataExchangerThread extends Thread {
 			}
 			
 			try {
-				instance.dataStore().statement().executeUpdate("START TRANSACTION");
+				ds.statement().executeUpdate("START TRANSACTION");
 				
-				PreparedStatement ps = instance.dataStore().prepareStatement("INSERT INTO synx_data (req, channel, tod, dat) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+				PreparedStatement ps = ds.prepareStatement("INSERT INTO synx_data (req, channel, tod, dat) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 				ps.setInt(1, packet.getFrom().getId());
 				ps.setString(2, packet.getChannel());
 				ps.setLong(3, packet.getTimeOfDeath());
@@ -117,13 +118,13 @@ class DataExchangerThread extends Thread {
 				}
 			
 				sb.setLength(sb.length()-1);
-				instance.dataStore().statement().executeUpdate("INSERT INTO synx_transfers (dest, dataid) VALUES "+sb);
-				instance.dataStore().statement().executeUpdate("COMMIT");
+				ds.statement().executeUpdate("INSERT INTO synx_transfers (dest, dataid) VALUES "+sb);
+				ds.statement().executeUpdate("COMMIT");
 			} catch (SQLException e) {
 				// TODO handle connection issues, so the packet is sent one more time
 				e.printStackTrace();
 				try {
-					instance.dataStore().statement().executeUpdate("ROLLBACK");
+					ds.statement().executeUpdate("ROLLBACK");
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
@@ -136,8 +137,8 @@ class DataExchangerThread extends Thread {
 			return;
 		}
 		try {
-			instance.dataStore().statement().executeUpdate("START TRANSACTION");
-			ResultSet rs = instance.dataStore().statement().executeQuery("SELECT t.id, d.req, d.channel, d.dat, d.tod FROM synx_transfers AS t, synx_data AS d WHERE t.dest = "+instance.node.getId()+" AND t.dataid = d.id AND d.channel IN ("+instance.registeredChannelsSQLList+")");
+			ds.statement().executeUpdate("START TRANSACTION");
+			ResultSet rs = ds.statement().executeQuery("SELECT t.id, d.req, d.channel, d.dat, d.tod FROM synx_transfers AS t, synx_data AS d WHERE t.dest = "+instance.node.getId()+" AND t.dataid = d.id AND d.channel IN ("+instance.registeredChannelsSQLList+")");
 			
 			StringBuilder sb = new StringBuilder();
 			while (rs.next()) {
@@ -151,13 +152,13 @@ class DataExchangerThread extends Thread {
 			int l = sb.length();
 			if (l>0) {
 				sb.setLength(l-1);
-				instance.dataStore().statement().executeUpdate("DELETE FROM synx_transfers WHERE id IN ("+sb+")");
-				instance.dataStore().statement().executeUpdate("COMMIT");
+				ds.statement().executeUpdate("DELETE FROM synx_transfers WHERE id IN ("+sb+")");
+				ds.statement().executeUpdate("COMMIT");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			try {
-				instance.dataStore().statement().executeUpdate("ROLLBACK");
+				ds.statement().executeUpdate("ROLLBACK");
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}

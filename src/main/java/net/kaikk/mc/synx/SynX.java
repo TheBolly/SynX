@@ -29,7 +29,6 @@ public class SynX extends JavaPlugin implements ChannelListener {
 	
 	private static SynX instance;
 	private Config config;
-	private DataStore ds;
 	private DataExchangerThread dataExchangerThread;
 	
 	@Override
@@ -43,12 +42,10 @@ public class SynX extends JavaPlugin implements ChannelListener {
 		config = new Config(instance);
 		
 		try {
-			ds = new DataStore(instance);
+			dataExchangerThread = new DataExchangerThread(instance);
 			
 			this.getServer().getPluginManager().registerEvents(new EventListener(this), this);
 			this.getCommand(this.getName()).setExecutor(new CommandExec(this));
-			
-			dataExchangerThread = new DataExchangerThread(instance);
 			
 			instance.register(instance, "SynX", instance);
 			
@@ -86,10 +83,6 @@ public class SynX extends JavaPlugin implements ChannelListener {
 	
 	public static SynX instance() {
 		return instance;
-	}
-
-	DataStore dataStore() {
-		return ds;
 	}
 	
 	Config config() {
