@@ -68,6 +68,9 @@ class DataExchangerThread extends Thread {
 			}
 		}
 		instance.debug("DataExchangerThread: stopped");
+		if (ds!=null) {
+			ds.dbClose();
+		}
 	}
 	
 	@Override
