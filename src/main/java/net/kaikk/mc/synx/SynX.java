@@ -201,8 +201,17 @@ public class SynX extends JavaPlugin implements ChannelListener {
 		return map.get(instance);
 	}
 
+	/** Get this server's node */
 	public Node getNode() {
 		return this.node;
+	}
+	
+	public Node getNode(String name) {
+		return this.nodes.get(name);
+	}
+	
+	public Node getNode(int id) {
+		return this.nodesById.get(id);
 	}
 
 	public Map<String, Node> getNodes() {
