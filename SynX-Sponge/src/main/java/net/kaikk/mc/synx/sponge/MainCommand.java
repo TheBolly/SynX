@@ -23,7 +23,7 @@ public class MainCommand implements CommandExecutor {
 		switch(param.toLowerCase()) {
 		case "reload": {
 			try {
-				instance.restart();
+				instance.reload();
 				sender.sendMessage(Text.of("[SynX] Plugin reloaded."));
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -10,6 +10,7 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -55,6 +56,11 @@ public class SynXSponge implements ISynX {
 		disable();
 	}
 	
+	@Listener
+	public void onServerReload(GameReloadEvent event) throws Exception {
+		reload();
+	}
+	
 	void enable() throws Exception {
 		synx = SynX.initialize(this);
 		
@@ -71,7 +77,7 @@ public class SynXSponge implements ISynX {
 		synx.deinitialize();
 	}
 	
-	void restart() throws Exception {
+	void reload() throws Exception {
 		disable();
 		enable();
 	}
