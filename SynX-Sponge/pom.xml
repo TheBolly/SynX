@@ -110,7 +110,7 @@
 	<parent>
 		<groupId>net.kaikk.mc</groupId>
 		<artifactId>SynX</artifactId>
-		<version>0.10</version>
+		<version>0.10.1</version>
 		<relativePath>..</relativePath>
 	</parent>
 </project>
