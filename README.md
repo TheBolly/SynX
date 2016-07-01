@@ -30,7 +30,7 @@ Add SynX to your build path. Maven:
 </repository>
 <dependency>
   <groupId>net.kaikk.mc</groupId>
-  <artifactId>SynX</artifactId>
+  <artifactId>SynX-Core</artifactId>
   <version>0.10</version>
   <type>jar</type>
   <scope>provided</scope>

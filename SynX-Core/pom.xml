@@ -57,7 +57,6 @@
 	<properties>
 		<developer>KaiNoMood</developer>
 	</properties>
-	<packaging>pom</packaging>
 	<parent>
 		<groupId>net.kaikk.mc</groupId>
 		<artifactId>SynX</artifactId>
