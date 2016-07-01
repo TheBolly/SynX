@@ -105,4 +105,5 @@
 		<developer>KaiNoMood</developer>
 	</properties>
 	<version>${project.parent.version}</version>
+	<groupId>net.kaikk.mc</groupId>
 </project>

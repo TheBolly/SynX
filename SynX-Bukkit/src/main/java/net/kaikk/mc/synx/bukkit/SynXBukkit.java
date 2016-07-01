@@ -20,7 +20,7 @@ public class SynXBukkit extends JavaPlugin implements ISynX {
 			synx = SynX.initialize(this);
 			
 			this.getServer().getPluginManager().registerEvents(new EventListener(synx), this);
-			this.getCommand(this.getName()).setExecutor(new CommandExec(this));
+			this.getCommand("synx").setExecutor(new CommandExec(this));
 			
 			new BukkitRunnable() {
 				@Override

@@ -1,13 +1,13 @@
-name: ${project.artifactId}
+name: SynX
 main: ${package}.SynXBukkit
 version: ${project.version}
 author: ${developer}
 
 commands:
-   ${project.artifactId}:
-      description: Manage ${project.artifactId}
+   synx:
+      description: Manage SynX
 
 permissions:
-    ${project.artifactId}.manage:
-        description: Manage ${project.artifactId}
+    synx.manage:
+        description: Manage synx
         default: op
