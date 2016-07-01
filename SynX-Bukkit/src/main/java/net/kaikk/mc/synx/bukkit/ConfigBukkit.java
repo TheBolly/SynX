@@ -1,15 +1,10 @@
-package net.kaikk.mc.synx;
+package net.kaikk.mc.synx.bukkit;
 
-import java.util.List;
+import net.kaikk.mc.synx.Config;
+import net.kaikk.mc.synx.Utils;
 
-class Config {
-	String nodeName, dbHostname, dbDatabase, dbUsername, dbPassword;
-	int waitTime;
-	long defaultTTL;
-	List<String> tags;
-	boolean debug;
-	
-	Config(SynX instance) {
+class ConfigBukkit extends Config {
+	ConfigBukkit(SynXBukkit instance) {
 		instance.saveDefaultConfig();
 		instance.reloadConfig();
 		

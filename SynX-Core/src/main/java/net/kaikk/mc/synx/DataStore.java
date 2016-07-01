@@ -1,7 +1,6 @@
 package net.kaikk.mc.synx;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,31 +16,17 @@ import net.kaikk.mc.synx.packets.Node;
 
 class DataStore {
 	private SynX instance;
-	private String dbUrl;
-	private String username;
-	private String password;
 	private Connection db;
 	
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	DataStore(SynX instance) throws Exception {
 		this.instance=instance;
-		this.dbUrl = "jdbc:mysql://"+instance.config().dbHostname+"/"+instance.config().dbDatabase;
-		this.username = instance.config().dbUsername;
-		this.password = instance.config().dbPassword;
-		
-		try {
-			//load the java driver for mySQL
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch(Exception e) {
-			this.instance.getLogger().severe("Unable to load Java's MySQL database driver. Check to make sure you've installed it properly.");
-			throw e;
-		}
 		
 		try {
 			this.dbCheck();
 		} catch(Exception e) {
-			this.instance.getLogger().severe("Unable to connect to database. Check your config file settings. Details: \n"+e.getMessage());
+			this.instance.log("ERROR: Unable to connect to database. Check your config file settings. Details: \n"+e.getMessage());
 			throw e;
 		}
 		
@@ -54,7 +38,7 @@ class DataStore {
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS synx_servers (id int(11) NOT NULL AUTO_INCREMENT,name char(8) NOT NULL,lastaction bigint(20) NOT NULL,tags varchar(255) NOT NULL,PRIMARY KEY (id),UNIQUE KEY name (name));");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS synx_transfers (id bigint(20) NOT NULL AUTO_INCREMENT,dest int(11) NOT NULL,dataid bigint(20) unsigned NOT NULL,PRIMARY KEY (id),KEY dest (dest));");
 		} catch(Exception e) {
-			this.instance.getLogger().severe("Unable to create the necessary database table. Details: \n"+e.getMessage());
+			this.instance.log("ERROR: Unable to create the necessary database table. Details: \n"+e.getMessage());
 			throw e;
 		}
 		
@@ -73,7 +57,7 @@ class DataStore {
 			if (n.getName().equals(instance.config().nodeName)) {
 				if (!Utils.compareCollections(Arrays.asList(n.getTags()), instance.config().tags)) {
 					it.remove(); // database data needs update!
-					instance.getLogger().info("Node data needs to be updated!");
+					instance.log("Node data needs to be updated!");
 				} else {
 					instance.node = n;
 				}
@@ -87,7 +71,7 @@ class DataStore {
 
 		if (instance.node == null) {
 			// Initialize node data
-			instance.getLogger().info("Initializing node data");
+			instance.log("Initializing node data");
 			ps = this.prepareStatement("INSERT INTO synx_servers (name, lastaction, tags) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE lastaction = VALUES(lastaction), tags = VALUES(tags)", Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, instance.config().nodeName);
 			ps.setLong(2, System.currentTimeMillis());
@@ -101,7 +85,7 @@ class DataStore {
 			instance.addNode(instance.node);
 		}
 		
-		instance.getLogger().info("Loaded "+instance.nodes.size()+" nodes");
+		instance.log("Loaded "+instance.nodes.size()+" nodes");
 	}
 
 	Statement statement() throws SQLException {
@@ -121,11 +105,7 @@ class DataStore {
 	
 	void dbCheck() throws SQLException {
 		if(this.db == null || this.db.isClosed()) {
-			Properties connectionProps = new Properties();
-			connectionProps.put("user", this.username);
-			connectionProps.put("password", this.password);
-			
-			this.db = DriverManager.getConnection(this.dbUrl, connectionProps);
+			this.db = instance.getImplementation().getDataSource(instance.config().dbHostname, instance.config().dbUsername, instance.config().dbPassword, instance.config().dbDatabase).getConnection();
 		}
 	}
 	

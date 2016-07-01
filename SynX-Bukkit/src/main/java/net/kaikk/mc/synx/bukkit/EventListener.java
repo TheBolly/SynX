@@ -1,18 +1,20 @@
-package net.kaikk.mc.synx;
+package net.kaikk.mc.synx.bukkit;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 
+import net.kaikk.mc.synx.SynX;
+
 class EventListener implements Listener {
-	private SynX instance;
+	private SynX synx;
 	
-	EventListener(SynX instance) {
-		this.instance = instance;
+	EventListener(SynX synx) {
+		this.synx = synx;
 	}
 	
 	@EventHandler
 	void onPluginDisable(PluginDisableEvent event) {
-		instance.unregisterAll(event.getPlugin());
+		synx.unregisterAll(event.getPlugin());
 	}
 }

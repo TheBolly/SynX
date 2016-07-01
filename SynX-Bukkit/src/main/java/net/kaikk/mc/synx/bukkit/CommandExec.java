@@ -1,4 +1,4 @@
-package net.kaikk.mc.synx;
+package net.kaikk.mc.synx.bukkit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -6,12 +6,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import net.kaikk.mc.synx.SynX;
 import net.kaikk.mc.synx.packets.Node;
 
 class CommandExec implements CommandExecutor {
-	private SynX instance;
+	private SynXBukkit instance;
 	
-	CommandExec(SynX instance) {
+	CommandExec(SynXBukkit instance) {
 		this.instance = instance;
 	}
 
@@ -36,16 +37,16 @@ class CommandExec implements CommandExecutor {
 			case "nodes": {
 				if (args.length==2 && args[1].toLowerCase().equals("details")) {
 					sender.sendMessage(ChatColor.RED+"[SynX] Detailed nodes list:");
-					for (Node node : instance.nodes.values()) {
+					for (Node node : SynX.instance().getNodes().values()) {
 						sender.sendMessage(ChatColor.AQUA+""+node.getId()+":"+node.getName()+" [tags: "+String.join(", ", node.getTags())+"]");
 					}
 				} else {
-					sender.sendMessage(ChatColor.RED+"[SynX] Nodes list: "+ChatColor.AQUA+String.join(", ", instance.nodes.keySet()));
+					sender.sendMessage(ChatColor.RED+"[SynX] Nodes list: "+ChatColor.AQUA+String.join(", ", SynX.instance().getNodes().keySet()));
 				}
 				return true;
 			}
 			case "tags": {
-				sender.sendMessage(ChatColor.RED+"[SynX] Tags list: "+ChatColor.AQUA+String.join(", ", instance.getTags()));
+				sender.sendMessage(ChatColor.RED+"[SynX] Tags list: "+ChatColor.AQUA+String.join(", ", SynX.instance().getTags()));
 				return true;
 			}
 			default:

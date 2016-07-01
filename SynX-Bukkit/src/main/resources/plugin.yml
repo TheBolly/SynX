@@ -1,5 +1,5 @@
 name: ${project.artifactId}
-main: ${package}.${project.artifactId}
+main: ${package}.SynXBukkit
 version: ${project.version}
 author: ${developer}
 
