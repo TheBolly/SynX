@@ -1,0 +1,13 @@
+name: SynX
+main: ${package}.bukkit.SynXBukkit
+version: ${project.version}
+author: ${developer}
+
+commands:
+   synx:
+      description: Manage SynX
+
+permissions:
+    synx.manage:
+        description: Manage synx
+        default: op

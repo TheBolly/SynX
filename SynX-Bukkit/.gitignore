@@ -1,9 +1,0 @@
-*.class
-lib/
-src/test/
-.settings/
-target/
-.idea/
-*.iml
-.classpath
-.project

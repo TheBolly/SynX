@@ -1,0 +1,4 @@
+name: SynX
+main: ${package}.bungee.SynXBungee
+version: ${project.version}
+author: ${developer}

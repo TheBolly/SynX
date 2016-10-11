@@ -1,10 +1,15 @@
 ##SynX
-Plugin that provides an easy way to transfer data between servers.
+Plugin that provides an easy way to transfer data between servers. Compatible with Bukkit, Sponge, and Bungeecord servers. 
 
 ## Download
 All builds for my plugins can be found at this link: http://kaikk.net/mc/
 
+## Install
+Place the jar in your plugin folder. The jar file is hybrid so the same jar file can be used for Bukkit, Sponge, and Bungeecord. Start the bukkit/sponge/bungeecord server so a default config file is generated. On Bukkit and Bungeecord you'll find the config at /plugins/SynX/config.yml. On Sponge, you'll find the config at /config/synx.conf. Be sure to set a short node name for all your servers. Now you can add any plugin that use SynX to transfer data. If you haven't already, I highly recommend to add [Sync](https://github.com/KaiKikuchi/Sync): it's a plugin that allows running commands from a remote bukkit/sponge/bungeecord server.
+
 ####Commands
+Currently, commands are not available on Bungeecord.
+
 ######/synx nodes
 - shows a list with all known nodes
 
