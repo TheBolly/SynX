@@ -62,7 +62,6 @@ public class SynXSponge implements ISynX {
 		    	synx.startDataExchangerThread();
 		    }
 		}).delayTicks(1).submit(this);
-			
 	}
 	
 	void disable() {
@@ -81,11 +80,15 @@ public class SynXSponge implements ISynX {
 
 	@Override
 	public Config loadConfig() throws Exception {
-		return new ConfigSponge(configManager);
+		return new ConfigSponge(this);
 	}
 
 	@Override
 	public DataSource getDataSource(String hostname, String username, String password, String database) throws SQLException {
 		return Sponge.getServiceManager().provide(SqlService.class).get().getDataSource("jdbc:mysql://"+username+(password.isEmpty() ? "" : ":"+password)+"@"+hostname+"/"+database);
+	}
+	
+	public ConfigurationLoader<CommentedConfigurationNode> getConfigManager() {
+		return configManager;
 	}
 }

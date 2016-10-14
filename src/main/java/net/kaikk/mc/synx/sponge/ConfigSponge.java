@@ -2,39 +2,38 @@ package net.kaikk.mc.synx.sponge;
 
 import java.net.URL;
 
-import com.google.common.collect.Lists;
+import org.spongepowered.api.Sponge;
+
 import com.google.common.reflect.TypeToken;
 
 import net.kaikk.mc.synx.Config;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 public class ConfigSponge extends Config {
-	ConfigSponge(ConfigurationLoader<CommentedConfigurationNode> configManager) throws Exception {
+	ConfigSponge(SynXSponge instance) throws Exception {
 		//load defaults
-		URL defaultsInJarURL = this.getClass().getResource("/synx.conf");
+		URL defaultsInJarURL = new URL("jar:file:/"+Sponge.getPluginManager().fromInstance(instance).get().getSource().get()+"!/config.conf");
 		HoconConfigurationLoader defaultsLoader = HoconConfigurationLoader.builder().setURL(defaultsInJarURL).build();
 		ConfigurationNode defaults = defaultsLoader.load();
 
 		//load config & merge defaults
-		ConfigurationNode rootNode = configManager.load();
+		ConfigurationNode rootNode = instance.getConfigManager().load();
 		rootNode.mergeValuesFrom(defaults);
-		configManager.save(rootNode);
+		instance.getConfigManager().save(rootNode);
 		
 		ConfigurationNode mySql = rootNode.getNode("MySQL");
-		this.dbHostname = mySql.getNode("Hostname").getString("localhost");
-		this.dbUsername = mySql.getNode("Username").getString("username");
-		this.dbPassword = mySql.getNode("Password").getString("password");
-		this.dbDatabase = mySql.getNode("Database").getString("database");
+		this.dbHostname = mySql.getNode("Hostname").getString();
+		this.dbUsername = mySql.getNode("Username").getString();
+		this.dbPassword = mySql.getNode("Password").getString();
+		this.dbDatabase = mySql.getNode("Database").getString();
 		
-		this.nodeName = rootNode.getNode("NodeName").getString("undefined");
-		this.waitTime = rootNode.getNode("DataExchangerThrottleTime").getInt(500);
-		this.defaultTTL = rootNode.getNode("DefaultTTL").getLong(86400000);
+		this.nodeName = rootNode.getNode("NodeName").getString();
+		this.waitTime = rootNode.getNode("DataExchangerThrottleTime").getInt();
+		this.defaultTTL = rootNode.getNode("DefaultTTL").getLong();
 		
-		this.debug = rootNode.getNode("Debug").getBoolean(false);
+		this.debug = rootNode.getNode("Debug").getBoolean();
 		
-		this.tags = rootNode.getNode("Tags").getList(TypeToken.of(String.class), Lists.newArrayList("default"));
+		this.tags = rootNode.getNode("Tags").getList(TypeToken.of(String.class));
 	}
 }
