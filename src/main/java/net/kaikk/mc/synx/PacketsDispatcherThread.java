@@ -34,7 +34,7 @@ class PacketsDispatcherThread extends Thread {
 					try {
 						instance.debug("Dispatching ", packet, " to ", entry.getKey());
 						entry.getValue().onPacketReceived(packet);
-					} catch (Exception e) {
+					} catch (Throwable e) {
 						instance.log("An exception has been thrown by "+entry.getKey()+" while executing onPacketReceived.");
 						e.printStackTrace();
 					}
