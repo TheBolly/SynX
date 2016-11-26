@@ -22,7 +22,7 @@ import net.kaikk.mc.synx.SynX;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
-@Plugin(id="synx", name="SynX", version="1.0", description = "SynX")
+@Plugin(id=PluginInfo.id, name = PluginInfo.name, version = PluginInfo.version, description = PluginInfo.description)
 public class SynXSponge implements ISynX {
 	private SynX synx;
 	
