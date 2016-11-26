@@ -1,20 +1,19 @@
 package net.kaikk.mc.synx.sponge;
 
-import java.net.URL;
-
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.asset.Asset;
 
 import com.google.common.reflect.TypeToken;
 
 import net.kaikk.mc.synx.Config;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 public class ConfigSponge extends Config {
 	ConfigSponge(SynXSponge instance) throws Exception {
 		//load defaults
-		URL defaultsInJarURL = new URL("jar:file:/"+Sponge.getPluginManager().fromInstance(instance).get().getSource().get()+"!/config.conf");
-		HoconConfigurationLoader defaultsLoader = HoconConfigurationLoader.builder().setURL(defaultsInJarURL).build();
+		Asset asset = Sponge.getAssetManager().getAsset(instance, "config.yml").get();
+		YAMLConfigurationLoader defaultsLoader = YAMLConfigurationLoader.builder().setURL(asset.getUrl()).build();
 		ConfigurationNode defaults = defaultsLoader.load();
 
 		//load config & merge defaults

@@ -16,7 +16,7 @@ class ConfigBungee extends Config {
 		File configFile = new File(instance.getDataFolder(), "config.yml");
 		configFile.mkdirs();
 		if (!configFile.exists()) {
-            try (InputStream in = instance.getResourceAsStream("config.yml")) {
+            try (InputStream in = instance.getResourceAsStream("assets/synx/config.yml")) {
                 Files.copy(in, configFile.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
