@@ -1,5 +1,12 @@
 package net.kaikk.mc.synx;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
@@ -41,5 +48,24 @@ public class Utils {
 			sb.deleteCharAt(sb.length()-1);
 		}
 		return sb.toString();
+	}
+	
+	public static byte[] convertToBytes(Serializable object) {
+	    try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	         ObjectOutput out = new ObjectOutputStream(bos)) {
+	        out.writeObject(object);
+	        return bos.toByteArray();
+	    } catch (Throwable e) {
+			throw new RuntimeException(e);
+		} 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends Serializable> T convertFromBytes(Class<T> c, byte[] bytes) {
+	    try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInput in = new ObjectInputStream(bis)) {
+	        return (T) in.readObject();
+	    } catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

@@ -1,5 +1,7 @@
 package net.kaikk.mc.synx;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -53,7 +55,18 @@ public class SynX implements ChannelListener {
 	public void send(String channel, byte[] data, Node... destination) {
 		this.send(channel, data, this.defaultTimeOfDeath(), destination);
 	}
-	
+
+	/**
+	 * Sends data to one or more nodes.<br>
+	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Data can't be more than 32726 bytes long.
+	 * @param channel the channel
+	 * @param object the object to be sent to other servers
+	 * @param destination nodes that will receive the data
+	 */
+	public void send(String channel, Serializable object, Node... destination) throws IOException {
+		this.send(channel, Utils.convertToBytes(object), destination);
+	}
 
 	/**
 	 * Sends data to one or more nodes <br>
@@ -77,6 +90,19 @@ public class SynX implements ChannelListener {
 	}
 	
 	/**
+	 * Sends data to one or more nodes <br>
+	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Data can't be more than 32726 bytes long.
+	 * @param channel the channel
+	 * @param object the object to be sent to other servers
+	 * @param timeOfDeath after the specified time in milliseconds since the epoch this packet data will be removed
+	 * @param destination nodes that will receive the data
+	 */
+	public void send(String channel, Serializable object, long timeOfDeath, Node... destination) {
+		this.send(channel, Utils.convertToBytes(object), timeOfDeath, destination);
+	}
+	
+	/**
 	 * Sends data to all known nodes. <br>
 	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
 	 * Data can't be more than 32726 bytes long.
@@ -85,6 +111,17 @@ public class SynX implements ChannelListener {
 	 */
 	public void broadcast(String channel, byte[] data) {
 		this.broadcast(channel, data, this.defaultTimeOfDeath());
+	}
+	
+	/**
+	 * Sends data to all known nodes. <br>
+	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Data can't be more than 32726 bytes long.
+	 * @param channel the channel
+	 * @param object the object to be sent to other servers
+	 */
+	public void broadcast(String channel, Serializable object) {
+		this.broadcast(channel, Utils.convertToBytes(object));
 	}
 
 	/**
@@ -100,6 +137,18 @@ public class SynX implements ChannelListener {
 			new IllegalArgumentException("Data can't be longer than 32726 bytes.");
 		}
 		this.dataExchangerThread.sendPacket(new NodePacket(this.node, channel, data, timeOfDeath, this.nodes.values().toArray(new Node[this.nodes.size()])));
+	}
+	
+	/**
+	 * Sends data to all known nodes. <br>
+	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Data can't be more than 32726 bytes long.
+	 * @param channel the channel
+	 * @param object the object to be sent to other servers
+	 * @param timeOfDeath after the specified time in milliseconds since the epoch this packet data will be removed
+	 */
+	public void broadcast(String channel, Serializable object, long timeOfDeath) {
+		this.broadcast(channel, Utils.convertToBytes(object), timeOfDeath);
 	}
 	
 	public Set<Node> getNodesByTag(String... tags) {
