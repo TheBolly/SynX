@@ -211,8 +211,10 @@ public class SynX implements ChannelListener {
 	/**
 	 * Register a channel listener for a plugin.
 	 * @param pluginInstance the plugin instance
-	 * @param channel the channel
+	 * @param channel the channel, max 8 characters
 	 * @param channelListener a class implementing ChannelListener
+	 * @throws NullPointerException if the channel is null
+	 * @throws IllegalArgumentException if the channel is empty, not alphanumeric, or longer than 8 characters.
 	 */
 	public void register(Object pluginInstance, String channel, ChannelListener channelListener) {
 		if (channel==null) {
@@ -242,7 +244,7 @@ public class SynX implements ChannelListener {
 	 * Unregister the specified channel listener for the specified plugin instance.
 	 * @param pluginInstance the plugin instance
 	 * @param channel the channel
-	 * @return true if the registered channel has been registered, false otherwise.
+	 * @return true if the registered channel was registered, false otherwise.
 	 */
 	public boolean unregister(Object pluginInstance, String channel) {
 		Map<Object, ChannelListener> map = this.registeredListeners.get(channel);
