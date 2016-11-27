@@ -1,6 +1,5 @@
 package net.kaikk.mc.synx;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -64,8 +63,8 @@ public class SynX implements ChannelListener {
 	 * @param object the object to be sent to other servers
 	 * @param destination nodes that will receive the data
 	 */
-	public void send(String channel, Serializable object, Node... destination) throws IOException {
-		this.send(channel, Utils.convertToBytes(object), destination);
+	public void send(String channel, Serializable object, Node... destination) {
+		this.send(channel, SynXUtils.convertToBytes(object), destination);
 	}
 
 	/**
@@ -99,7 +98,7 @@ public class SynX implements ChannelListener {
 	 * @param destination nodes that will receive the data
 	 */
 	public void send(String channel, Serializable object, long timeOfDeath, Node... destination) {
-		this.send(channel, Utils.convertToBytes(object), timeOfDeath, destination);
+		this.send(channel, SynXUtils.convertToBytes(object), timeOfDeath, destination);
 	}
 	
 	/**
@@ -121,7 +120,7 @@ public class SynX implements ChannelListener {
 	 * @param object the object to be sent to other servers
 	 */
 	public void broadcast(String channel, Serializable object) {
-		this.broadcast(channel, Utils.convertToBytes(object));
+		this.broadcast(channel, SynXUtils.convertToBytes(object));
 	}
 
 	/**
@@ -148,7 +147,7 @@ public class SynX implements ChannelListener {
 	 * @param timeOfDeath after the specified time in milliseconds since the epoch this packet data will be removed
 	 */
 	public void broadcast(String channel, Serializable object, long timeOfDeath) {
-		this.broadcast(channel, Utils.convertToBytes(object), timeOfDeath);
+		this.broadcast(channel, SynXUtils.convertToBytes(object), timeOfDeath);
 	}
 	
 	public Set<Node> getNodesByTag(String... tags) {
@@ -223,7 +222,7 @@ public class SynX implements ChannelListener {
 		if (channel.isEmpty()) {
 			throw new IllegalArgumentException("Channel can't be empty!");
 		}
-		if (!Utils.isAlphanumeric(channel)) {
+		if (!SynXUtils.isAlphanumeric(channel)) {
 			throw new IllegalArgumentException("Channel must be alphanumeric!");
 		}
 		if (channel.length()>8) {

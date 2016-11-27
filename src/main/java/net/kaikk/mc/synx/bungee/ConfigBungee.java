@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 
 import net.kaikk.mc.synx.Config;
-import net.kaikk.mc.synx.Utils;
+import net.kaikk.mc.synx.SynXUtils;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -35,7 +35,7 @@ class ConfigBungee extends Config {
 			throw new IllegalArgumentException("Defined node name ("+this.nodeName+") is longer than 16 characters. Please check your config file.");
 		}
 
-		if (!Utils.isAlphanumeric(this.nodeName)) {
+		if (!SynXUtils.isAlphanumeric(this.nodeName)) {
 			throw new IllegalArgumentException("Defined node name ("+this.nodeName+") is not alphanumeric. Please check your config file.");
 		}
 		

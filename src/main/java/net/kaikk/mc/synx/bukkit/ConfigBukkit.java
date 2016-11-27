@@ -9,7 +9,7 @@ import java.nio.file.StandardCopyOption;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.kaikk.mc.synx.Config;
-import net.kaikk.mc.synx.Utils;
+import net.kaikk.mc.synx.SynXUtils;
 
 class ConfigBukkit extends Config {
 	ConfigBukkit(SynXBukkit instance) {
@@ -26,7 +26,7 @@ class ConfigBukkit extends Config {
 			throw new IllegalArgumentException("Defined node name ("+this.nodeName+") is longer than 16 characters. Please check your config file.");
 		}
 
-		if (!Utils.isAlphanumeric(this.nodeName)) {
+		if (!SynXUtils.isAlphanumeric(this.nodeName)) {
 			throw new IllegalArgumentException("Defined node name ("+this.nodeName+") is not alphanumeric. Please check your config file.");
 		}
 		

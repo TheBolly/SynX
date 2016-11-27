@@ -55,7 +55,7 @@ class DataStore {
 		while (it.hasNext()) {
 			Node n = it.next();
 			if (n.getName().equals(instance.config().nodeName)) {
-				if (!Utils.compareCollections(Arrays.asList(n.getTags()), instance.config().tags)) {
+				if (!SynXUtils.compareCollections(Arrays.asList(n.getTags()), instance.config().tags)) {
 					it.remove(); // database data needs update!
 					instance.log("Node data needs to be updated!");
 				} else {

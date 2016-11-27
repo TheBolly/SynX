@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-public class Utils {
+public class SynXUtils {
 	private static Pattern alphanumeric = Pattern.compile("[a-zA-Z0-9]");
 	public static boolean isAlphanumeric(String string) {
 		return alphanumeric.matcher(string).find();
@@ -64,6 +64,14 @@ public class Utils {
 	public static <T extends Serializable> T convertFromBytes(Class<T> c, byte[] bytes) {
 	    try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInput in = new ObjectInputStream(bis)) {
 	        return (T) in.readObject();
+	    } catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static Object convertFromBytes(byte[] bytes) {
+	    try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInput in = new ObjectInputStream(bis)) {
+	        return in.readObject();
 	    } catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
