@@ -93,6 +93,8 @@ class DataExchangerThread extends Thread {
 				nodes.add(node);
 			}
 			
+			nodes.remove(null);
+			
 			if (nodes.remove(instance.node)) {
 				// This packet has to be sent to this server too, so instead of sending it to the MySQL server, just send it to the dispatcher.
 				this.dispatcher.dispatchQueue.add(packet);
