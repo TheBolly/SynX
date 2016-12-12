@@ -26,12 +26,14 @@ Currently, commands are not available on Bungeecord.
 - MySQL database
 
 ### Developers: How to implement easily SynX into your plugin!
-1. Add SynX to your build path. Maven:  
+Add SynX to your build path. Maven:  
 ```xml
 <repository>
   <id>net.kaikk.mc</id>
   <url>http://kaikk.net/mc/repo/</url>
 </repository>
+```
+```xml
 <dependency>
   <groupId>net.kaikk.mc</groupId>
   <artifactId>SynX</artifactId>
@@ -40,7 +42,7 @@ Currently, commands are not available on Bungeecord.
   <scope>provided</scope>
 </dependency>
 ```
-2. Make a new class that implements Serializable. Add all the attributes that you want to be sent to the other servers. For this example, I'll call this class "SerializableExample".
-3. Use `SynX.instance().broadcast("Example", Serializable object)` to send data to all your servers. The parameters of this method are a channel name (you choose one) and an object of the class that you made on step 2 that contains the data you want to be sent to the other servers.
-4. Implement the ChannelListener interface to your main plugin class. Implement the `onPacketReceived(Packet packet)` method on your main plugin class. The packet object is the data received from the other servers. You can convert data back to an object by using `SynXUtils.convertFromBytes(SerializableExample.class, packet.getData())`
-5. In your plugin onEnable method, register the channel with `SynX.instance().register(this, "Example", this)`. The parameters of this method are the plugin instance, a channel name (the same you choose previously for the broadcast method), and an object that implements the ChannelListener interface (in our example, it's the plugin main class).
+1. Make a new class that implements Serializable. Add all the attributes that you want to be sent to the other servers. For this example, I'll call this class "SerializableExample".
+2. Use `SynX.instance().broadcast("Example", Serializable object)` to send data to all your servers. The parameters of this method are a channel name (you choose one) and an object of the class that you made on step 2 that contains the data you want to be sent to the other servers.
+3. Implement the ChannelListener interface to your main plugin class. Implement the `onPacketReceived(Packet packet)` method on your main plugin class. The packet object is the data received from the other servers. You can convert data back to an object by using `SynXUtils.convertFromBytes(SerializableExample.class, packet.getData())`
+4. In your plugin onEnable method, register the channel with `SynX.instance().register(this, "Example", this)`. The parameters of this method are the plugin instance, a channel name (the same you choose previously for the broadcast method), and an object that implements the ChannelListener interface (in our example, it's the plugin main class).
