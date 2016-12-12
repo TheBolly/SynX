@@ -34,7 +34,7 @@ Currently, commands are not available on Bungeecord.
 </repository>
 <dependency>
   <groupId>net.kaikk.mc</groupId>
-  <artifactId>SynX-Core</artifactId>
+  <artifactId>SynX</artifactId>
   <version>1.1</version>
   <type>jar</type>
   <scope>provided</scope>
