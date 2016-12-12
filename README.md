@@ -25,7 +25,7 @@ Currently, commands are not available on Bungeecord.
 ####Requirements
 - MySQL database
 
-####Developers
+##Developers
 ### Example plugin
 - [JoinedPlayersBroadcaster](http://github.com/KaiKikuchi/JoinedPlayersBroadcaster) is an example Bukkit plugin that uses SynX to broadcast a message to all players. 
 
