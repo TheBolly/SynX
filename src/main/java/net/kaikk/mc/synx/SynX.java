@@ -44,8 +44,7 @@ public class SynX implements ChannelListener {
 	}
 
 	/**
-	 * Sends data to one or more nodes.<br>
-	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Sends data to one or more nodes.
 	 * Data can't be more than 32726 bytes long.
 	 * @param channel the channel
 	 * @param data data to be sent
@@ -56,8 +55,7 @@ public class SynX implements ChannelListener {
 	}
 
 	/**
-	 * Sends data to one or more nodes.<br>
-	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Sends data to one or more nodes.
 	 * Data can't be more than 32726 bytes long.
 	 * @param channel the channel
 	 * @param object the object to be sent to other servers
@@ -68,8 +66,7 @@ public class SynX implements ChannelListener {
 	}
 
 	/**
-	 * Sends data to one or more nodes <br>
-	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Sends data to one or more nodes
 	 * Data can't be more than 32726 bytes long.
 	 * @param channel the channel
 	 * @param data data to be sent
@@ -89,8 +86,7 @@ public class SynX implements ChannelListener {
 	}
 	
 	/**
-	 * Sends data to one or more nodes <br>
-	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Sends data to one or more nodes
 	 * Data can't be more than 32726 bytes long.
 	 * @param channel the channel
 	 * @param object the object to be sent to other servers
@@ -102,8 +98,7 @@ public class SynX implements ChannelListener {
 	}
 	
 	/**
-	 * Sends data to all known nodes. <br>
-	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Sends data to all known nodes.
 	 * Data can't be more than 32726 bytes long.
 	 * @param channel the channel
 	 * @param data data to be sent
@@ -113,8 +108,7 @@ public class SynX implements ChannelListener {
 	}
 	
 	/**
-	 * Sends data to all known nodes. <br>
-	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Sends data to all known nodes.
 	 * Data can't be more than 32726 bytes long.
 	 * @param channel the channel
 	 * @param object the object to be sent to other servers
@@ -124,8 +118,7 @@ public class SynX implements ChannelListener {
 	}
 
 	/**
-	 * Sends data to all known nodes. <br>
-	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Sends data to all known nodes.
 	 * Data can't be more than 32726 bytes long.
 	 * @param channel the channel
 	 * @param data data to be sent
@@ -139,8 +132,7 @@ public class SynX implements ChannelListener {
 	}
 	
 	/**
-	 * Sends data to all known nodes. <br>
-	 * Suggestion: use ByteStreams.newDataOutput() for generating data to be sent.
+	 * Sends data to all known nodes.
 	 * Data can't be more than 32726 bytes long.
 	 * @param channel the channel
 	 * @param object the object to be sent to other servers
