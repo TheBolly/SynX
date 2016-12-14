@@ -8,7 +8,8 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.sql.SqlService;
@@ -31,8 +32,12 @@ public class SynXSponge implements ISynX {
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
 	
 	@Listener
-	public void onServerStart(GameStartingServerEvent event) throws Exception {
+	public void onServerStart(GamePreInitializationEvent event) throws Exception {
 		this.enable();
+	}
+	
+	@Listener
+	public void onServerStart(GameInitializationEvent event) throws Exception {
 		CommandSpec commandSpec = CommandSpec.builder()
 			    .description(Text.of("SynX Main Command"))
 			    .permission("synx.manage")
