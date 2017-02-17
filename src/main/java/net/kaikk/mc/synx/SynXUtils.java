@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 public class SynXUtils {
-	private static Pattern alphanumeric = Pattern.compile("[a-zA-Z0-9]");
+	protected static Pattern alphanumeric = Pattern.compile("[a-zA-Z0-9]");
 	public static boolean isAlphanumeric(String string) {
 		return alphanumeric.matcher(string).find();
 	}
@@ -26,30 +26,30 @@ public class SynXUtils {
 		if (c1.size()!=c2.size()) {
 			return false;
 		}
-		
+
 		for (Object o : c1) {
 			if (!c2.contains(o)) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	public static String mergeStringArrayFromIndex(String[] arrayString, int i) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		for(;i<arrayString.length;i++){
 			sb.append(arrayString[i]);
 			sb.append(' ');
 		}
-		
+
 		if (sb.length()!=0) {
 			sb.deleteCharAt(sb.length()-1);
 		}
 		return sb.toString();
 	}
-	
+
 	public static byte[] convertToBytes(Serializable object) {
 	    try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	         ObjectOutput out = new ObjectOutputStream(bos)) {
@@ -57,9 +57,9 @@ public class SynXUtils {
 	        return bos.toByteArray();
 	    } catch (Throwable e) {
 			throw new RuntimeException(e);
-		} 
+		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T extends Serializable> T convertFromBytes(Class<T> c, byte[] bytes) {
 	    try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInput in = new ObjectInputStream(bis)) {
@@ -68,7 +68,7 @@ public class SynXUtils {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static Object convertFromBytes(byte[] bytes) {
 	    try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInput in = new ObjectInputStream(bis)) {
 	        return in.readObject();

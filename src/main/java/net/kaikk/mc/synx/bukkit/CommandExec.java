@@ -9,10 +9,10 @@ import org.bukkit.command.CommandSender;
 import net.kaikk.mc.synx.SynX;
 import net.kaikk.mc.synx.packets.Node;
 
-class CommandExec implements CommandExecutor {
-	private SynXBukkit instance;
-	
-	CommandExec(SynXBukkit instance) {
+public class CommandExec implements CommandExecutor {
+	protected SynXBukkit instance;
+
+	protected CommandExec(SynXBukkit instance) {
 		this.instance = instance;
 	}
 
@@ -21,12 +21,12 @@ class CommandExec implements CommandExecutor {
 			if (!sender.hasPermission(instance.getName()+".manage")) {
 				return false;
 			}
-			
+
 			if (args.length==0) {
 				sender.sendMessage(ChatColor.RED+"Usage: /"+label+" [reload|nodes|tags]");
 				return false;
 			}
-			
+
 			switch(args[0].toLowerCase()) {
 			case "reload": {
 				Bukkit.getPluginManager().disablePlugin(instance);

@@ -1,18 +1,20 @@
 package net.kaikk.mc.synx.packets;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public final class Node {
+public final class Node implements Serializable {
+	private static final long serialVersionUID = 7225441473909027715L;
 	private final int id;
 	private final String name;
 	private final String[] tags;
-	
+
 	public Node(int id, String name, String[] tags) {
 		this.id = id;
 		this.name = name;
 		this.tags = tags;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -20,7 +22,7 @@ public final class Node {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	public String[] getTags() {
 		return this.tags;
 	}
@@ -60,6 +62,6 @@ public final class Node {
 			return false;
 		return true;
 	}
-	
-	
+
+
 }

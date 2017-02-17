@@ -11,12 +11,12 @@ import org.spongepowered.api.text.format.TextColors;
 import net.kaikk.mc.synx.SynX;
 
 public class MainCommand implements CommandExecutor {
-	private SynXSponge instance;
-	
-	MainCommand(SynXSponge instance) {
+	protected SynXSponge instance;
+
+	protected MainCommand(SynXSponge instance) {
 		this.instance = instance;
 	}
-	
+
 	@Override
 	public CommandResult execute(CommandSource sender, CommandContext args) throws CommandException {
 		String param = args.<String>getOne("command").get();

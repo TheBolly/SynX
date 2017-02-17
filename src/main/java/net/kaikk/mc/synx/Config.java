@@ -1,16 +1,19 @@
 package net.kaikk.mc.synx;
 
+import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 public abstract class Config {
 	protected String nodeName, dbHostname, dbDatabase, dbUsername, dbPassword;
-	protected int waitTime;
+	protected int interval;
 	protected long defaultTTL;
 	protected List<String> tags;
 	protected boolean debug;
-	
-	public int getWaitTime() {
-		return waitTime;
+
+	public int getInterval() {
+		return interval;
 	}
 	public long getDefaultTTL() {
 		return defaultTTL;
@@ -18,4 +21,6 @@ public abstract class Config {
 	public boolean isDebug() {
 		return debug;
 	}
+
+	public abstract DataSource getDataSource() throws SQLException;
 }

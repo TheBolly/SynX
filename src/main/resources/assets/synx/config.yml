@@ -4,11 +4,11 @@ MySQL:
   Password: password
   Database: database
 
-# Node name. Must be alphanumeric.
+# Node name. Must be alphanumeric. Max 8 characters
 NodeName: undefined
 
-# Times between MySQL requests in milliseconds. Can't be less than 200.
-DataExchangerThrottleTime: 500
+# Times between each thread cicle in ms. Can't be less than 50.
+DataExchangerThrottleTime: 200
 
 # Time a packet should live by default. In milliseconds. Default: 1 day.
 DefaultTTL: 86400000

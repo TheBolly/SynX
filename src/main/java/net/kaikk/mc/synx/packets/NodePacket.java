@@ -24,6 +24,6 @@ public final class NodePacket extends Packet {
 			sb.setLength(l-1);
 		}
 		
-		return "NodePacket [from=" + this.getFrom() + ", channel=" + this.getChannel() + ", data.length="+this.getData().length+", nodes=["+sb+"]]";
+		return "NodePacket [from=" + this.getFrom() + ", channel=" + this.getChannel() + ", data.length=" + this.getData().length + ", nodes=["+sb+"]]";
 	}
 }

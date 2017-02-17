@@ -6,15 +6,15 @@ import org.bukkit.event.server.PluginDisableEvent;
 
 import net.kaikk.mc.synx.SynX;
 
-class EventListener implements Listener {
-	private SynX synx;
-	
-	EventListener(SynX synx) {
+public class EventListener implements Listener {
+	protected SynX synx;
+
+	protected EventListener(SynX synx) {
 		this.synx = synx;
 	}
-	
+
 	@EventHandler
-	void onPluginDisable(PluginDisableEvent event) {
+	protected void onPluginDisable(PluginDisableEvent event) {
 		synx.unregisterAll(event.getPlugin());
 	}
 }

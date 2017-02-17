@@ -1,7 +1,11 @@
 package net.kaikk.mc.synx.packets;
 
+import java.io.Serializable;
+
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+
+import net.kaikk.mc.synx.SynXUtils;
 
 public class Packet {
 	private final Node from;
@@ -24,6 +28,14 @@ public class Packet {
 		return data;
 	}
 	
+	public Object getObject() {
+		return SynXUtils.convertFromBytes(data);
+	}
+	
+	public <T extends Serializable> T getObject(Class<T> clazz) {
+		return SynXUtils.convertFromBytes(clazz, data);
+	}
+	
 	public ByteArrayDataInput getDataInputStream() {
 		return ByteStreams.newDataInput(this.data);
 	}
@@ -38,6 +50,6 @@ public class Packet {
 
 	@Override
 	public String toString() {
-		return "Packet [from=" + from + ", channel=" + channel + ", data.length="+data.length+"]";
+		return "Packet [from=" + from + ", channel=" + channel + ", data.length=" + data.length+"]";
 	}
 }
