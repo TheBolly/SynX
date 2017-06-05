@@ -1,32 +1,32 @@
-##SynX
+## SynX
 Plugin that provides an easy way to transfer data between servers. Cross-compatible with Bukkit, Sponge, and Bungeecord servers. 
 
 ## Download
 All builds for my plugins can be found at this link: http://kaikk.net/mc/
 
-####Requirements
+#### Requirements
 - MySQL database
 - [Kai's Commons](http://github.com/KaiKikuchi/KaisCommons)
 
 ## Install
 Place the jar in your plugin folder. The jar file is hybrid so the same jar file can be used for Bukkit, Sponge, and Bungeecord. Start the bukkit/sponge/bungeecord server so a default config file is generated. On Bukkit and Bungeecord you'll find the config at /plugins/SynX/config.yml. On Sponge, you'll find the config at /config/synx.conf. Be sure to set a short node name for all your servers and a shared MySQL database. Now you can add any plugin that use SynX to transfer data. If you haven't already, I highly recommend to add [Sync](https://github.com/KaiKikuchi/Sync): it's a plugin that allows running commands from a remote bukkit/sponge/bungeecord server.
 
-####Commands
+#### Commands
 Currently, commands are not available on Bungeecord.
 
-######/synx nodes
+###### /synx nodes
 - shows a list with all known nodes
 
-######/synx tags
+###### /synx tags
 - shows a list with all known tags 
 
-######/synx reload
+###### /synx reload
 - reloads the plugin
 
-####Permissions
+#### Permissions
 - synx.manage - Permission necessary to run all commands (default: op)
 
-##Developers
+## Developers
 ### Example plugin
 - [JoinedPlayersBroadcaster](http://github.com/KaiKikuchi/JoinedPlayersBroadcaster) is an example Bukkit plugin that uses SynX to broadcast a message to all players. 
 
