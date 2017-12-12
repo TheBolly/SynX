@@ -1,18 +1,17 @@
 package net.kaikk.mc.synx;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import net.kaikk.mc.synx.DataExchanger.Locked;
 import net.kaikk.mc.synx.packets.ChannelListener;
 import net.kaikk.mc.synx.packets.Node;
 import net.kaikk.mc.synx.packets.NodePacket;
@@ -47,7 +46,7 @@ public class SynX implements ChannelListener {
 
 	/**
 	 * Sends data to one or more nodes.
-	 * Data can't be more than 32726 bytes long.
+	 * Data can't be more than 16MiB long.
 	 * @param channel the channel
 	 * @param data data to be sent
 	 * @param destination nodes that will receive the data
@@ -55,10 +54,21 @@ public class SynX implements ChannelListener {
 	public void send(String channel, byte[] data, Node... destination) {
 		this.send(channel, data, this.defaultTimeOfDeath(), destination);
 	}
+	
+	/**
+	 * Sends data to one or more nodes.
+	 * Data can't be more than 16MiB long.
+	 * @param channel the channel
+	 * @param data data to be sent
+	 * @param destination nodes that will receive the data
+	 */
+	public void send(String channel, byte[] data, Collection<Node> destination) {
+		this.send(channel, data, destination.toArray(new Node[destination.size()]));
+	}
 
 	/**
 	 * Sends data to one or more nodes.
-	 * Data can't be more than 32726 bytes long.
+	 * Data can't be more than 16MiB long.
 	 * @param channel the channel
 	 * @param object the object to be sent to other servers
 	 * @param destination nodes that will receive the data
@@ -66,10 +76,22 @@ public class SynX implements ChannelListener {
 	public void send(String channel, Serializable object, Node... destination) {
 		this.send(channel, SynXUtils.convertToBytes(object), destination);
 	}
+	
+	/**
+	 * Sends data to one or more nodes.
+	 * Data can't be more than 16MiB long.
+	 * @param channel the channel
+	 * @param object the object to be sent to other servers
+	 * @param destination nodes that will receive the data
+	 */
+	public void send(String channel, Serializable object, Collection<Node> destination) {
+		this.send(channel, object, destination.toArray(new Node[destination.size()]));
+	}
+	
 
 	/**
 	 * Sends data to one or more nodes
-	 * Data can't be more than 32726 bytes long.
+	 * Data can't be more than 16MiB long.
 	 * @param channel the channel
 	 * @param data data to be sent
 	 * @param timeOfDeath after the specified time in milliseconds since the epoch this packet data will be removed
@@ -80,16 +102,28 @@ public class SynX implements ChannelListener {
 			new IllegalArgumentException("Invalid destination.");
 		}
 
-		if (data.length>32726) {
-			new IllegalArgumentException("Data can't be longer than 32726 bytes.");
+		if (data.length>16777215) {
+			new IllegalArgumentException("Data can't be longer than 16MiB.");
 		}
 
 		this.dataExchanger.sendPacket(new NodePacket(this.node, channel, data, timeOfDeath, destination));
 	}
+	
+	/**
+	 * Sends data to one or more nodes
+	 * Data can't be more than 16MiB long.
+	 * @param channel the channel
+	 * @param data data to be sent
+	 * @param timeOfDeath after the specified time in milliseconds since the epoch this packet data will be removed
+	 * @param destination nodes that will receive the data
+	 */
+	public void send(String channel, byte[] data, long timeOfDeath, Collection<Node> destination) {
+		this.send(channel, data, timeOfDeath, destination.toArray(new Node[destination.size()]));
+	}
 
 	/**
 	 * Sends data to one or more nodes
-	 * Data can't be more than 32726 bytes long.
+	 * Data can't be more than 16MiB long.
 	 * @param channel the channel
 	 * @param object the object to be sent to other servers
 	 * @param timeOfDeath after the specified time in milliseconds since the epoch this packet data will be removed
@@ -98,10 +132,22 @@ public class SynX implements ChannelListener {
 	public void send(String channel, Serializable object, long timeOfDeath, Node... destination) {
 		this.send(channel, SynXUtils.convertToBytes(object), timeOfDeath, destination);
 	}
+	
+	/**
+	 * Sends data to one or more nodes
+	 * Data can't be more than 16MiB long.
+	 * @param channel the channel
+	 * @param object the object to be sent to other servers
+	 * @param timeOfDeath after the specified time in milliseconds since the epoch this packet data will be removed
+	 * @param destination nodes that will receive the data
+	 */
+	public void send(String channel, Serializable object, long timeOfDeath, Collection<Node> destination) {
+		this.send(channel, object, timeOfDeath, destination.toArray(new Node[destination.size()]));
+	}
 
 	/**
 	 * Sends data to all known nodes.
-	 * Data can't be more than 32726 bytes long.
+	 * Data can't be more than 16MiB long.
 	 * @param channel the channel
 	 * @param data data to be sent
 	 */
@@ -111,7 +157,7 @@ public class SynX implements ChannelListener {
 
 	/**
 	 * Sends data to all known nodes.
-	 * Data can't be more than 32726 bytes long.
+	 * Data can't be more than 16MiB long.
 	 * @param channel the channel
 	 * @param object the object to be sent to other servers
 	 */
@@ -121,21 +167,21 @@ public class SynX implements ChannelListener {
 
 	/**
 	 * Sends data to all known nodes.
-	 * Data can't be more than 32726 bytes long.
+	 * Data can't be more than 16MiB long.
 	 * @param channel the channel
 	 * @param data data to be sent
 	 * @param timeOfDeath after the specified time in milliseconds since the epoch this packet data will be removed
 	 */
 	public void broadcast(String channel, byte[] data, long timeOfDeath) {
-		if (data.length>32726) {
-			new IllegalArgumentException("Data can't be longer than 32726 bytes.");
+		if (data.length>16777215) {
+			new IllegalArgumentException("Data can't be longer than 16MiB.");
 		}
 		this.dataExchanger.sendPacket(new NodePacket(this.node, channel, data, timeOfDeath, this.nodes.values().toArray(new Node[this.nodes.size()])));
 	}
 
 	/**
 	 * Sends data to all known nodes.
-	 * Data can't be more than 32726 bytes long.
+	 * Data can't be more than 16MiB long.
 	 * @param channel the channel
 	 * @param object the object to be sent to other servers
 	 * @param timeOfDeath after the specified time in milliseconds since the epoch this packet data will be removed
@@ -219,8 +265,8 @@ public class SynX implements ChannelListener {
 		if (!SynXUtils.isAlphanumeric(channel)) {
 			throw new IllegalArgumentException("Channel must be alphanumeric!");
 		}
-		if (channel.length()>8) {
-			throw new IllegalArgumentException("Channel can't be longer than 8 characters!");
+		if (channel.length()>16) {
+			throw new IllegalArgumentException("Channel can't be longer than 16 characters!");
 		}
 
 		Map<Object, ChannelListener> map = this.registeredListeners.get(channel);
@@ -350,7 +396,9 @@ public class SynX implements ChannelListener {
 
 		inst.dataExchanger = new DataExchanger(inst);
 		inst.dataExchanger.init();
-
+		
+		instance = inst;
+		
 		inst.registeredListeners.clear();
 		inst.register(inst, "SynX", inst);
 
@@ -362,41 +410,27 @@ public class SynX implements ChannelListener {
 		for (String s : inst.node.getTags()) {
 			out.writeUTF(s);
 		}
+		
 		inst.broadcast("SynX", out.toByteArray(), System.currentTimeMillis()+60000L);
-		inst.implementation.startExchanger(inst.dataExchanger, inst.config.interval);
-		instance = inst;
-
+		
 		return inst;
 	}
+	
+	public void start() {
+		this.dataExchanger.start();
+	}
 
+	public void shutdown() {
+		this.dataExchanger.shutdown();
+	}
+	
 	/**
 	 * Called by the SynX implementation to deinitialize SynX, usually on server stop or implementation disabling.
 	 */
 	public void deinitialize() {
-		if (this.implementation != null) {
-			this.implementation.stopExchanger(this.dataExchanger);
-			waitForLock(this.dataExchanger.getDispatcher());
-			waitForLock(this.dataExchanger.getMaintenance());
-			waitForLock(this.dataExchanger.getReceiver());
-			waitForLock(this.dataExchanger.getSender());
-		}
+		this.shutdown();
 		this.implementation = null;
 		instance = null;
-	}
-
-	private void waitForLock(Locked locked) {
-		if (locked.lock.isLocked()) {
-        	log("Waiting for "+locked.getClass().getSimpleName()+" thread to terminate...");
-	        try {
-	            if (locked.lock.tryLock() || locked.lock.tryLock(10, TimeUnit.SECONDS)) {
-	            	locked.lock.unlock();
-	            } else {
-	            	log("Timeout while waiting for "+locked.getClass().getSimpleName()+" thread to terminate!");
-	            }
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        }
-        }
 	}
 
 	@Override

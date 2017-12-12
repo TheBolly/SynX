@@ -11,15 +11,15 @@ import net.kaikk.mc.kaiscommons.mysql.AMySQLQueries;
 import net.kaikk.mc.kaiscommons.mysql.MySQLConnection;
 import net.kaikk.mc.synx.packets.Node;
 
-public class MySQLQueries extends AMySQLQueries {
-	private PreparedStatement createTableData, createTableServers, createTableTransfers, getNodes, insertNode, dataReceiverSelect, deleteTransfer, dataSenderInsertData, dataSenderInsertTransfer, updateLastActivity, purgeTransfers1, purgeTransfers2;
+public class SQLQueries extends AMySQLQueries {
+	private PreparedStatement createTableData, createTableServers, createTableTransfers, getNodes, insertNode, dataReceiverSelect, deleteTransfer, dataSenderInsertData, dataSenderInsertTransfer, updateLastActivity, purgeTransfers1, purgeTransfers2, dataTableExpansion;
 	private MySQLConnection<? extends AMySQLQueries> connection;
 	private String currentRegisteredChannelsSQLList;
 
 	@Override
 	public void init(MySQLConnection<? extends AMySQLQueries> connection) throws SQLException {
 		this.connection = connection;
-		this.createTableData = connection.prepareStatement("CREATE TABLE IF NOT EXISTS synx_data (id bigint(20) unsigned NOT NULL AUTO_INCREMENT,req int(11) NOT NULL,channel char(16) NOT NULL,tod bigint(20) NOT NULL,dat varbinary(32767) NOT NULL,PRIMARY KEY (id),KEY channel (channel));");
+		this.createTableData = connection.prepareStatement("CREATE TABLE IF NOT EXISTS synx_data (id bigint(20) unsigned NOT NULL AUTO_INCREMENT,req int(11) NOT NULL,channel char(16) NOT NULL,tod bigint(20) NOT NULL,dat mediumblob NOT NULL,PRIMARY KEY (id),KEY channel (channel));");
 		this.createTableServers = connection.prepareStatement("CREATE TABLE IF NOT EXISTS synx_servers (id int(11) NOT NULL AUTO_INCREMENT,name char(8) NOT NULL,lastaction bigint(20) NOT NULL,tags varchar(255) NOT NULL,PRIMARY KEY (id),UNIQUE KEY name (name));");
 		this.createTableTransfers = connection.prepareStatement("CREATE TABLE IF NOT EXISTS synx_transfers (id bigint(20) NOT NULL AUTO_INCREMENT,dest int(11) NOT NULL,dataid bigint(20) unsigned NOT NULL,PRIMARY KEY (id),KEY dest (dest));");
 
@@ -33,12 +33,15 @@ public class MySQLQueries extends AMySQLQueries {
 		this.updateLastActivity = connection.prepareStatement("UPDATE synx_servers SET lastaction = ? WHERE id = ?");
 		this.purgeTransfers1 = connection.prepareStatement("DELETE FROM synx_transfers WHERE dataid NOT IN (SELECT id FROM synx_data)");
 		this.purgeTransfers2 = connection.prepareStatement("DELETE d, t FROM synx_data AS d LEFT OUTER JOIN synx_transfers AS t ON t.dataid = d.id WHERE d.tod < ?");
+		
+		this.dataTableExpansion = connection.prepareStatement("ALTER TABLE synx_data CHANGE dat dat MEDIUMBLOB NOT NULL;");
 	}
 
 	public void createTables() throws SQLException {
 		this.createTableData.executeUpdate();
 		this.createTableServers.executeUpdate();
 		this.createTableTransfers.executeUpdate();
+		this.dataTableExpansion.executeUpdate();
 	}
 
 	public ResultSet getNodes() throws SQLException {

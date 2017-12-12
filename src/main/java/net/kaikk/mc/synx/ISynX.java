@@ -7,6 +7,4 @@ package net.kaikk.mc.synx;
 public interface ISynX {
 	void log(String message);
 	Config loadConfig() throws Exception;
-	void startExchanger(DataExchanger exchanger, int interval);
-	void stopExchanger(DataExchanger exchanger);
 }

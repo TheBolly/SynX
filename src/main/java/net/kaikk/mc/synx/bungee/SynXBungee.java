@@ -19,6 +19,9 @@ public class SynXBungee extends Plugin implements ISynX {
 	public void onEnable() {
 		try {
 			synx = SynX.initialize(this);
+			this.getProxy().getScheduler().schedule(this, () -> {
+				synx.start();
+			}, 5L, TimeUnit.SECONDS);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -38,26 +41,6 @@ public class SynXBungee extends Plugin implements ISynX {
 	@Override
 	public Config loadConfig() throws Exception {
 		return new ConfigBungee(this);
-	}
-	
-	@Override
-	public void startExchanger(DataExchanger exchanger, int interval) {
-		ScheduledTask[] t = new ScheduledTask[4];
-		t[0] = this.getProxy().getScheduler().schedule(this, exchanger.getMaintenance(), 0L, 1L, TimeUnit.HOURS);
-		t[1] = this.getProxy().getScheduler().schedule(this, exchanger.getDispatcher(), 0L, interval, TimeUnit.MILLISECONDS);
-		t[2] = this.getProxy().getScheduler().schedule(this, exchanger.getSender(), 0L, interval, TimeUnit.MILLISECONDS);
-		t[3] = this.getProxy().getScheduler().schedule(this, exchanger.getReceiver(), 5000L, interval, TimeUnit.MILLISECONDS);
-		tasks.put(exchanger, t);
-	}
-
-	@Override
-	public void stopExchanger(DataExchanger exchanger) {
-		ScheduledTask[] t = tasks.remove(exchanger);
-        if (t != null) {
-            for (ScheduledTask task : t) {
-            	task.cancel();
-            }
-        }
 	}
 }
 

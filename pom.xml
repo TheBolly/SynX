@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.kaikk.mc</groupId>
 	<artifactId>SynX</artifactId>
-	<version>1.2</version>
+	<version>1.2.2</version>
 	<licenses>
 		<license>
 			<name>GPL v3 License</name>
@@ -58,6 +58,33 @@
 						<id>attach-sources</id>
 						<goals>
 							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>templating-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<id>filter-src</id>
+						<goals>
+							<goal>filter-sources</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -118,12 +145,14 @@
 		<dependency>
 			<groupId>net.kaikk.mc</groupId>
 			<artifactId>KaisCommons</artifactId>
-			<version>0.9</version>
+			<version>0.9.7</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<properties>
 		<package>net.kaikk.mc.synx</package>
+		<lowercaseid>synx</lowercaseid>
+		<description></description>
 		<developer>KaiNoMood</developer>
 	</properties>
 </project>

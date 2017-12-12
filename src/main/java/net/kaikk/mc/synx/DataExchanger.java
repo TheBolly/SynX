@@ -12,8 +12,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 import net.kaikk.mc.kaiscommons.mysql.MySQLConnection;
 import net.kaikk.mc.synx.packets.ChannelListener;
@@ -25,15 +28,17 @@ public class DataExchanger {
 	protected long lastHourlyTask;
 	protected final Queue<NodePacket> sendQueue = new LinkedBlockingQueue<>();
 	protected final SynX instance;
-	protected final MySQLConnection<MySQLQueries> connection;
+	protected final MySQLConnection<SQLQueries> connection;
 	protected final DataReceiver receiver;
 	protected final DataSender sender;
 	protected final Maintenance maintenance;
 	protected final PacketsDispatcher dispatcher;
+	
+	protected ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
 	public DataExchanger(SynX instance) throws SQLException {
 		this.instance = instance;
-		this.connection = new MySQLConnection<>(instance.config.getDataSource(), MySQLQueries.class);
+		this.connection = new MySQLConnection<>(instance.config.getDataSource(), SQLQueries.class);
 		this.receiver = new DataReceiver();
 		this.sender = new DataSender();
 		this.maintenance = new Maintenance();
@@ -82,12 +87,31 @@ public class DataExchanger {
 			this.connection.close();
 		}
 	}
+	
+	public void start() {
+		this.scheduler.scheduleWithFixedDelay(this.getMaintenance(), 0, 1, TimeUnit.HOURS);
+		this.scheduler.scheduleWithFixedDelay(this.getSender(), 0, instance.config.interval, TimeUnit.MILLISECONDS);
+		this.scheduler.scheduleWithFixedDelay(this.getReceiver(), 0, instance.config.interval, TimeUnit.MILLISECONDS);
+		this.dispatcher.start();
+	}
+
+	public void shutdown() {
+		scheduler.shutdownNow();
+		try {
+			if (!scheduler.awaitTermination(10, TimeUnit.SECONDS)) {
+				instance.log("Timeout while waiting for pending operations to complete!");
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		this.dispatcher.shutdown();
+	}
 
 	public void sendPacket(NodePacket packet) {
 		this.sendQueue.add(packet);
 	}
 
-	public class DataReceiver extends Locked implements Runnable {
+	public class DataReceiver implements Runnable {
 		final Collection<Long> idsToDelete = new ArrayList<Long>();
 
 		@Override
@@ -95,47 +119,39 @@ public class DataExchanger {
 			if (instance.registeredChannelsSQLList.isEmpty()) {
 				return;
 			}
-			if (!lock.tryLock()) {
-				return;
-			}
 			try {
-				try {
-					ResultSet rs = connection.queries().dataReceiverSelect(instance.node.getId());
-					while (rs.next()) {
-						idsToDelete.add(rs.getLong(1));
-						Node remoteNode = instance.nodesById.get(rs.getInt(2));
-						Packet packet = new Packet(remoteNode != null ? remoteNode : new Node(rs.getInt(2), "UNKNOWN_NODE", new String[] {}), rs.getString(3), rs.getBytes(4), rs.getLong(5));
-						dispatcher.dispatchQueue.add(packet);
-					}
-
-					if (!idsToDelete.isEmpty()) {
-						connection.queries().deleteTransfers(idsToDelete);
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				} finally {
-					connection.close();
-					idsToDelete.clear();
+				ResultSet rs = connection.queries().dataReceiverSelect(instance.node.getId());
+				while (rs.next()) {
+					idsToDelete.add(rs.getLong(1));
+					Node remoteNode = instance.nodesById.get(rs.getInt(2));
+					Packet packet = new Packet(remoteNode != null ? remoteNode : new Node(rs.getInt(2), "UNKNOWN_NODE", new String[] {}), rs.getString(3), rs.getBytes(4), rs.getLong(5));
+					dispatcher.dispatchQueue.put(packet);
 				}
+
+				if (!idsToDelete.isEmpty()) {
+					connection.queries().deleteTransfers(idsToDelete);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+
 			} finally {
-				lock.unlock();
+				connection.close();
+				idsToDelete.clear();
 			}
 		}
 	}
 
-	public class DataSender extends Locked implements Runnable {
+	public class DataSender implements Runnable {
 		@Override
 		public void run() {
-			if (!lock.tryLock()) {
-				return;
-			}
 			NodePacket packet;
 			boolean useConnection = false;
 			try {
 				while ((packet = sendQueue.poll()) != null) {
 					instance.debug("Sending " + packet);
 
-					Set<Node> nodes = new HashSet<Node>();
+					final Set<Node> nodes = new HashSet<Node>();
 					for (Node node : packet.getNodes()) {
 						nodes.add(node);
 					}
@@ -144,7 +160,11 @@ public class DataExchanger {
 
 					if (nodes.remove(instance.node)) {
 						// This packet has to be sent to this server too, so instead of sending it to the MySQL server, just send it to the dispatcher.
-						dispatcher.dispatchQueue.add(packet);
+						try {
+							dispatcher.dispatchQueue.put(packet);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 
 					if (nodes.isEmpty()) {
@@ -166,17 +186,13 @@ public class DataExchanger {
 				if (useConnection) {
 					connection.close();
 				}
-				lock.unlock();
 			}
 		}
 	}
 
-	public class Maintenance extends Locked implements Runnable {
+	public class Maintenance implements Runnable {
 		@Override
 		public void run() {
-			if (!lock.tryLock()) {
-				return;
-			}
 			try {
 				connection.queries().updateLastActivity(instance.getNode().getId());
 				connection.queries().purgeTransfers();
@@ -184,49 +200,53 @@ public class DataExchanger {
 				e.printStackTrace();
 			} finally {
 				connection.close();
-				lock.unlock();
 			}
 		}
 	}
 
-	public class PacketsDispatcher extends Locked implements Runnable {
-		protected LinkedBlockingQueue<Packet> dispatchQueue = new LinkedBlockingQueue<>();
-		private final ReentrantLock lock2 = new ReentrantLock();
+	public class PacketsDispatcher extends Thread {
+		protected SynchronousQueue<Packet> dispatchQueue = new SynchronousQueue<>();
+		protected volatile boolean running = true;
 
+		public PacketsDispatcher() {
+			super("SynX-PacketDispatcher");
+		}
+		
 		@Override
 		public void run() {
-			if (!lock2.tryLock()) {
-				return;
-			}
-			try {
-				Packet packet = dispatchQueue.take();
-				lock.lock();
-				do {
-					Map<?, ChannelListener> map = instance.registeredListeners.get(packet.getChannel());
-					if (map == null) {
-						return;
+			while(running) {
+				try {
+					this.processPacket(dispatchQueue.take());
+				} catch (InterruptedException e) {
+					Packet packet;
+					while ((packet = dispatchQueue.poll()) != null) {
+						this.processPacket(packet);
 					}
-					for (Entry<?, ChannelListener> entry : map.entrySet()) {
-						try {
-							instance.debug("Dispatching ", packet, " to ", entry.getKey());
-							entry.getValue().onPacketReceived(packet);
-						} catch (Throwable e) {
-							instance.log("An exception has been thrown by " + entry.getKey() + " while executing onPacketReceived.");
-							e.printStackTrace();
-						}
-					}
-				} while ((packet = dispatchQueue.poll()) != null);
-			} catch (InterruptedException e) {
-
-			} finally {
-				lock.unlock();
-				lock2.unlock();
+					break;
+				}
 			}
 		}
-	}
-
-	static class Locked {
-		public final ReentrantLock lock = new ReentrantLock();
+		
+		protected void processPacket(Packet packet) {
+			Map<?, ChannelListener> map = instance.registeredListeners.get(packet.getChannel());
+			if (map == null) {
+				return;
+			}
+			for (Entry<?, ChannelListener> entry : map.entrySet()) {
+				try {
+					instance.debug("Dispatching ", packet, " to ", entry.getKey());
+					entry.getValue().onPacketReceived(packet);
+				} catch (Throwable e) {
+					instance.log("An exception has been thrown by " + entry.getKey() + " while executing onPacketReceived.");
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		public void shutdown() {
+			this.running = false;
+			this.interrupt();
+		}
 	}
 
 	public DataReceiver getReceiver() {
