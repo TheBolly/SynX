@@ -1,24 +1,18 @@
 package net.kaikk.mc.synx.bukkit;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
+import net.kaikk.mc.kaiscommons.bukkit.CommonBukkitUtils;
 import net.kaikk.mc.synx.Config;
 import net.kaikk.mc.synx.SynXUtils;
 
 public class ConfigBukkit extends Config {
 	protected ConfigBukkit(SynXBukkit instance) {
-		copyAsset(instance, "config.yml");
+		CommonBukkitUtils.copyAsset(instance, "config.yml");
 		instance.reloadConfig();
 
 		this.nodeName=instance.getConfig().getString("NodeName", "");
@@ -54,23 +48,6 @@ public class ConfigBukkit extends Config {
 		this.tags=instance.getConfig().getStringList("Tags");
 
 		this.debug=instance.getConfig().getBoolean("Debug");
-	}
-
-	public static void copyAsset(JavaPlugin instance, String assetName) {
-		File file = new File(instance.getDataFolder(), assetName);
-		if (!file.exists()) {
-			try {
-				Files.copy(getAsset(instance, assetName),
-						file.getAbsoluteFile().toPath(),
-						StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	public static InputStream getAsset(JavaPlugin instance, String assetName) {
-		return instance.getResource("assets/"+instance.getName().toLowerCase()+"/"+assetName);
 	}
 
 	@Override
